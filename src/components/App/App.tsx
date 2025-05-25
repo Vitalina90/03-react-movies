@@ -26,8 +26,7 @@ export default function App(): ReactElement {
         return;
       }
       setMovies(results);
-    } catch (err) {
-        console.error(err);
+    } catch {
         setError(true);
     } finally {
       setLoading(false);
