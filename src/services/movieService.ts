@@ -23,6 +23,6 @@ export const fetchMovies = async (query: string): Promise<Movie[]> => {
     return response.data.results;
 };
 
-export const imgURL = 'https://image.tmdb.org/t/p/w500';
+export const imgURL = 'https://image.tmdb.org/t/p/w500/';
 
 

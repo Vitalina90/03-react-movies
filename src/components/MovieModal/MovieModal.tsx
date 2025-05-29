@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
 import css from './MovieModal.module.css';
+import { useEffect, useRef } from 'react';
 import type { Movie } from '../../types/movie';
+import { createPortal } from 'react-dom';
+import { imgURL } from '../../services/movieService';
 
 interface MovieModalProps {
     movie: Movie;
@@ -9,43 +11,52 @@ interface MovieModalProps {
 
 export default function MovieModal({ movie, onClose }: MovieModalProps) {
     const { title, overview, backdrop_path, release_date, vote_average } = movie;
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+    const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (event.target === event.currentTarget) {
+            onClose();
+        }
+    };
 
     useEffect(() => {
-        const handleEsc = (event: KeyboardEvent) => {
-            if (event.code === 'Escape') onClose();
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+            }
         };
 
-    window.addEventListener('keydown', handleEsc);
-    document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', handleEsc);
+        document.body.style.overflow = 'hidden';
 
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'auto';
-    };
-  }, [onClose]);
+        closeButtonRef.current?.focus();
 
-  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
-      if (event.target === event.currentTarget) {
-        onClose();
-    } 
-  };
+        return () => {
+            document.removeEventListener('keydown', handleEsc);
+            document.body.style.overflow = '';
+        };
+    }, [onClose]);
 
-    return (
-        <div className={css.backdrop}
+    // const imageSrc = backdrop_path ? `${imgURL}${backdrop_path}` : 'https://via.placeholder.com/500x281.png?text=No+Image';
+
+    return createPortal(
+        <div
+            className={css.backdrop}
             role='dialog'
             aria-modal='true'
             onClick={handleBackdropClick}
         >
             <div className={css.modal}>
-                <button className={css.closeButton}
+                <button
+                    className={css.closeButton}
                     aria-label='Close modal'
                     onClick={onClose}
                 >
                     &times;
                 </button>
                 <img
-                    src={`https://image.tmdb.org/t/p/original/${backdrop_path}`}
-                    alt={`movie.title`}
+                    src={`${imgURL}${backdrop_path}`}
+                    alt={title}
                     className={css.image}
                 />
                 <div className={css.content}>
@@ -59,58 +70,9 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
                     </p>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 
 
-// export default function MovieModal({ movie, onClose }) {
-//   useEffect(() => {
-//     const handleEsc = (e) => e.code === 'Escape' && onClose();
-//     window.addEventListener('keydown', handleEsc);
-//     document.body.style.overflow = 'hidden';
-
-//     return () => {
-//       window.removeEventListener('keydown', handleEsc);
-//       document.body.style.overflow = 'auto';
-//     };
-//   }, [onClose]);
-
-//   const handleBackdropClick = (e) => {
-//     if (e.target === e.currentTarget) onClose();
-//   };
-
-//   return (
-//     <div
-//       className={css.backdrop}
-//       role="dialog"
-//       aria-modal="true"
-//       onClick={handleBackdropClick}
-//     >
-//       <div className={css.modal}>
-//         <button
-//           className={css.closeButton}
-//           onClick={onClose}
-//           aria-label="Close modal"
-//         >
-//           &times;
-//         </button>
-//         <img
-//           src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-//           alt={movie.title}
-//           className={css.image}
-//         />
-//         <div className={css.content}>
-//           <h2>{movie.title}</h2>
-//           <p>{movie.overview}</p>
-//           <p>
-//             <strong>Release Date:</strong> {movie.release_date}
-//           </p>
-//           <p>
-//             <strong>Rating:</strong> {movie.vote_average}/10
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

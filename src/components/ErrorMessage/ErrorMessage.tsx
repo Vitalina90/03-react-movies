@@ -1,5 +1,5 @@
-import type { ReactElement } from 'react';
 import css from './ErrorMessage.module.css';
+import type { ReactElement } from 'react';
 
 export default function ErrorMessage(): ReactElement {
     return (

@@ -1,15 +1,15 @@
-import { useState, type ReactElement, type CSSProperties} from 'react';
 import css from './Loader.module.css';
+import { type ReactElement, type CSSProperties } from 'react';
 import { RingLoader } from 'react-spinners'
   
 export default function Loader(): ReactElement {
-    const [loading] = useState(true);
+    const loading = true;
     const color = '#0000FF';
 
     const override: CSSProperties = {
         display: 'block',
         margin: '0 auto',
-        borderColor: 'color',
+        borderColor: color,
     };
 
     return (
@@ -21,7 +21,7 @@ export default function Loader(): ReactElement {
         color={color}
         loading={loading}
         cssOverride={override}
-        size={80}
+        size={50}
         aria-label='Loading Spinner'
         data-testid='loader'
             />
